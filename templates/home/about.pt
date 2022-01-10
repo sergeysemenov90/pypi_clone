@@ -1,0 +1,7 @@
+<div metal:use-macro='load: C:\Users\Сергей\Documents\Python Projects\pypi_clone\templates\shared\_layout.html'>
+    <div metal:fill-slot='content' tal:omit-tag='True'>
+        
+        About PyPi
+
+    </div>
+</div>
