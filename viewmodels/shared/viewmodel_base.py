@@ -12,5 +12,4 @@ class ViewModelBase:
         self.is_logged_in = cookie_auth.get_user_id_from_auth_cookie(self.request)
 
     def to_dict(self) -> dict:
-        print(f'Data: {self.__dict__}, from: {self.__class__}')
         return self.__dict__
