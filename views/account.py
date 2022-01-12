@@ -1,3 +1,5 @@
+import asyncio
+
 import fastapi
 from starlette import requests
 from starlette.requests import Request
@@ -16,8 +18,9 @@ router = fastapi.APIRouter()
 
 @router.get('/account')
 @template
-def index(request: Request):
+async def index(request: Request):
     vm = AccountViewModel(request)
+    await vm.load()
     return vm.to_dict()
 
 
@@ -37,7 +40,7 @@ async def register(request: Request):
         return vm.to_dict()
 
     # TODO: create the account
-    account = user_service.create_account(vm.name, vm.email, vm.password)
+    account = await user_service.create_account(vm.name, vm.email, vm.password)
     # TODO: Login user
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_auth(response, account.id)
@@ -48,6 +51,7 @@ async def register(request: Request):
 @template
 def login(request: Request):
     vm = LoginViewModel(request)
+    vm.load()
     return vm.to_dict()
 
 
@@ -59,8 +63,9 @@ async def login(request: Request):
 
     if vm.error:
         return vm.to_dict()
-    user = user_service.login_user(vm.email, vm.password)
+    user = await user_service.login_user(vm.email, vm.password)
     if not user:
+        await asyncio.sleep(5)
         vm.error = 'The account does not exist or the password is wrong'
         return vm.to_dict()
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)

@@ -10,7 +10,7 @@ class DetailsViewModel(ViewModelBase):
         super().__init__(request)
 
         self.package_name = package_name
-        self.package = package_service.get_service_by_id(package_name)
+        self.package = package_service.get_package_by_id(package_name)
         self.latest_release = package_service.get_latest_release_for_package(package_name)
         self.latest_version = '0.0.0'
         self.is_latest = True
@@ -18,6 +18,6 @@ class DetailsViewModel(ViewModelBase):
 
         if not self.package or not self.latest_version:
             return 
-        
-        self.latest_version = self.latest_release.version
-        self.maintainers = self.package.maintainers
+
+        r = self.latest_release
+        self.latest_version = f'{r.major_ver}.{r.minor_ver}.{r.build_ver}'

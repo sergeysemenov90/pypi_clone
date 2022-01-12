@@ -1,28 +1,56 @@
 import datetime
 from typing import List, Optional
+
+import sqlalchemy.orm
+
+from data import db_session
 from data.package import Package
 from data.release import Release
 
 
 def package_count() -> int:
-    return 172_280
+    session = db_session.create_session()
+    try:
+        return session.query(Package).count()
+    finally:
+        session.close()
+
 
 def release_count() -> int:
-    return 320_826
-        
-def packages(limit) -> List:
-    return [
-        {'id': 'fastapi', 'summary' : 'fast and beautiful pythpn framework'},
-        {'id': 'uvicorn', 'summary' : 'your favorite ASGI server'},
-        {'id': 'httpx', 'summary' : 'window to async world'},
-        ][:limit]
+    session = db_session.create_session()
+    try:
+        return session.query(Release).count()
+    finally:
+        session.close()
 
-def get_service_by_id(package_name: str) -> Package:
-    package = Package(
-        package_name, 'his is the summary', 'ull details here',
-        'https://fastapi.tiangolo.com/', 'MIT', 'sebastian ramirez'
-    )
-    return package
+
+def last_packages(limit) -> List[Package]:
+    session = db_session.create_session()
+
+    try:
+        releases = session.query(Release) \
+            .options(
+            sqlalchemy.orm.joinedload(Release.package)
+        ).order_by(Release.created_date.desc()) \
+            .limit(limit).all()
+    finally:
+        session.close()
+    return list({r.package for r in releases})
+
+
+def get_package_by_id(package_name: str) -> Package:
+    session = db_session.create_session()
+    try:
+        package = session.query(Package).filter(Package.id == package_name).first()
+        return package
+    finally:
+        session.close()
+
 
 def get_latest_release_for_package(package_name: str) -> Optional[Release]:
-    return Release('1.2.0', datetime.datetime.now())
+    session = db_session.create_session()
+    try:
+        release = session.query(Release).filter(Release.package_id == package_name).order_by(Release.created_date.desc()).first()
+        return release
+    finally:
+        session.close()
