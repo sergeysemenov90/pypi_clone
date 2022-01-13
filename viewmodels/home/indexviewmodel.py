@@ -1,4 +1,6 @@
 from typing import List
+
+from data.package import Package
 from viewmodels.shared.viewmodel_base import ViewModelBase
 from starlette.requests import Request
 from services.package_service import package_count, release_count, last_packages
@@ -15,7 +17,7 @@ class IndexViewModel(ViewModelBase):
         self.packages: List = []
 
     async def load(self):
-        self.package_count: int = package_count()
-        self.release_count: int = release_count()
+        self.package_count: int = await package_count()
+        self.release_count: int = await release_count()
         self.user_count: int = await user_count()
-        self.packages: List = last_packages(limit=5)
+        self.packages: List[Package] = await last_packages(limit=5)
