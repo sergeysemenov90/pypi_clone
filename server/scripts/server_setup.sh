@@ -15,25 +15,26 @@ sudo apt-get install -y -q python3-pip python3-dev python3-venv
 # Stop the hackers
 sudo apt install fail2ban -y
 
+# Allow ports for our connections to applications
 ufw allow 22
 ufw allow 80
 ufw allow 443
 ufw enable
 
-
+# Create our user, use root it`s a bad idea
 apt install acl -y
-useradd -M apiuser
-usermod -L apiuser
+useradd -M appuser
+usermod -L appuser
 
 
 # Web app file structure
 mkdir /apps
 chmod 777 /apps
 mkdir /apps/logs
-mkdir /apps/logs/weather_api
-mkdir /apps/logs/weather_api/app_log
-# chmod 777 /apps/logs/weather_api
-setfacl -m u:apiuser:rwx /apps/logs/weather_api
+mkdir /apps/logs/pypi_cone
+mkdir /apps/logs/pypi_clone/app_log
+chmod 777 /apps/logs/pypi_cone
+setfacl -m u:appuser:rwx /apps/logs/pypi_cone
 # cd /apps
 
 # Create a virtual env for the app.
