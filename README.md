@@ -1,6 +1,6 @@
 # pypi_clone
 
-![main page](static/image/mainpage1.png "Main page")
+![main page](static/img/mainpage1.png "Main page")
 
 Clone of the most popular package repository for python.
 Deployed at - http://167.99.89.10/
